@@ -4,22 +4,22 @@
 shared_secret=$(openssl rand -hex 30)
 
 # get string to encrypt from user
-printf "\n\nCopy File to encrypt into `pwd`/\n"
-read -p "Enter file to encrypt : `pwd`/" filename
+printf "\n\nCopy File to encrypt into `pwd`/assets/\n"
+read -p "Enter file to encrypt : `pwd`/assets/" filename
 
 # optionally, zip first then encrypt...might not work
 while getopts "z" option; do
  case "${option}" in
- 	z ) filepath="./${filename}"; zip -r "${filename}.zip" ${filepath}; filepath="${filepath}.zip"; filename="${filename}.zip"
+ 	z ) filepath="./assets/${filename}"; zip -r "${filepath}.zip" ${filepath}; filepath="${filepath}.zip"; filename="${filename}.zip"
 			# encrypt file
 			openssl enc -aes-256-cbc -salt -a -pass pass:$shared_secret -in ${filepath} -out ${filepath}.enc
-			cmd="openssl enc -aes-256-cbc -d -a -in ./${filename}.enc -out ./${filename}; unzip ./${filename} && rm ./${filename}"
-			rm -f "${filename}"
+			cmd="openssl enc -aes-256-cbc -d -a -in ${filepath}.enc -out ${filepath}; unzip ${filepath} && rm ${filepath}"
+			rm -f "${filepath}"
 		 ;;
-	: ) filepath="./${filename}"
+	: ) filepath="./assets/${filename}"
 			# encrypt file
 			openssl enc -aes-256-cbc -salt -a -pass pass:$shared_secret -in ${filepath} -out ${filepath}.enc
-			cmd="openssl enc -aes-256-cbc -d -a -in ./${filename}.enc -out ./${filename}"
+			cmd="openssl enc -aes-256-cbc -d -a -in ${filepath}.enc -out ${filepath}"
 		 ;;
 	\? ) echo "Usage: cmd [-z]"
      ;;
@@ -27,5 +27,5 @@ while getopts "z" option; do
 done
 
 # print shared secret and crypt command
-printf "\n\nShared Secret (send via email):\n$shared_secret\n"
-printf "\nDecryption Command (send via slack or second email):\n$cmd\n\n"
+printf "\n\nShared Secret (send via [encrypted optionally] email):\n$shared_secret\n"
+printf "\nDecryption Command (send with .enc file via slack or second email):\n$cmd\n\n"

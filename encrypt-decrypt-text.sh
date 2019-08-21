@@ -11,5 +11,5 @@ encrypted_string=$(echo "$secret" | openssl enc -aes-256-cbc -a -pass pass:$shar
 cmd="echo \"$encrypted_string\" | openssl enc -aes-256-cbc -a -d"
 
 # print shared secret and decrypt command
-printf "\n\nShared Secret (send via email):\n$shared_secret\n"
+printf "\n\nShared Secret (send via [encrypted optionally] email):\n$shared_secret\n"
 printf "\nDecryption Command (send via slack):\n$cmd\n\n"
